@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { Toaster } from 'react-hot-toast';
@@ -38,6 +38,12 @@ export default function App() {
     setSelectedMovie(movie);
   };
 
+  useEffect(() => {
+    if (!isLoading && !isError && data && data.results.length === 0) {
+      toast.error('No movies found for your request.');
+    }
+  }, [data, isLoading, isError]);
+
   return (
    <div className={styles.app}>
       <SearchBar onSubmit={handleSearch} />
@@ -45,10 +51,6 @@ export default function App() {
 
       {isLoading && <Loader />}
       {isError && <ErrorMessage />}
-
-      {!isLoading && !isError && data?.results.length === 0 && (
-        toast.error('No movies found for your request.')
-      )}
 
       {!isLoading && !isError && data && data.results.length > 0 && (
       <>
